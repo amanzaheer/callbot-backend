@@ -830,12 +830,9 @@ class CallController {
         if (callSession.callState === 'completed') {
           await telnyxService.hangup(callControlId, business.telnyxApiKey);
           await callSessionService.updateCallStatus(callSession._id, 'completed', { endTime: new Date() });
-        } else {
-          const lang = callSession.detectedLanguage || business.aiSettings?.supportedLanguages?.[0] || 'en';
-          await telnyxService.transcriptionStart(callControlId, business.telnyxApiKey, {
-            language: telnyxService.constructor.getTelnyxTranscriptionLanguage(lang)
-          });
         }
+        // Do not call transcription_start here: we already started it in call.initiated (inbound)
+        // or call.answered (outbound). Telnyx keeps transcription running; starting again returns 422.
         return res.status(200).send('OK');
       }
 

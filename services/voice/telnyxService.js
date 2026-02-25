@@ -108,7 +108,13 @@ class TelnyxService {
         }
       );
     } catch (error) {
-      logger.error('Telnyx transcription_start error:', error.response?.data || error.message);
+      const data = error.response?.data;
+      const alreadyInProgress = data?.errors?.[0]?.code === '90054';
+      if (error.response?.status === 422 && alreadyInProgress) {
+        logger.info('Telnyx transcription already in progress, skipping');
+        return;
+      }
+      logger.error('Telnyx transcription_start error:', data || error.message);
       throw error;
     }
   }
