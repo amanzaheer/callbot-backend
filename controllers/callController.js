@@ -734,8 +734,12 @@ class CallController {
         return res.status(400).send('Bad Request');
       }
 
-      const callControlId = payload.call_control_id;
-      const { from, to, direction } = payload;
+      const callControlId = payload?.call_control_id;
+      const { from, to, direction } = payload || {};
+      if (!callControlId && eventType !== 'call.hangup') {
+        logger.warn('Telnyx webhook missing call_control_id', { eventType });
+        return res.status(200).send('OK');
+      }
 
       if (eventType === 'call.initiated') {
         logger.info('Telnyx call.initiated payload', { callControlId, from, to, direction });

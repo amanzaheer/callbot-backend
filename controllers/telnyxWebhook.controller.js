@@ -10,11 +10,11 @@ exports.telnyxWebhook = async (req, res) => {
 
         // Telnyx can send either { event_type, payload } or { data: { event_type, payload } }
         const wrapper = req.body?.data || req.body;
-        const event_type = wrapper.event_type;
-        const payload = wrapper.payload || wrapper;
+        const event_type = wrapper?.event_type;
+        const payload = wrapper?.payload ?? wrapper;
 
-        // Inbound call event
-        if (event_type === 'call.initiated') {
+        // Only handle call.initiated; other events (e.g. call.transcription) are handled by full flow
+        if (event_type === 'call.initiated' && payload?.call_control_id) {
             const callControlId = payload.call_control_id;
 
             // 1️⃣ Answer call
