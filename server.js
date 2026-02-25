@@ -20,7 +20,6 @@ const businessRoutes = require('./routes/business');
 const callRoutes = require('./routes/calls');
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
-const telnyxRoutes = require('./routes/telnyx.routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -51,9 +50,6 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Telnyx webhook routes (mounted at absolute path in router)
-app.use(telnyxRoutes);
 
 // Rate limiting
 const limiter = rateLimit({

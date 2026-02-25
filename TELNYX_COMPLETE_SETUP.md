@@ -197,6 +197,33 @@ No monthly minimum; you pay for usage. Good for testing and for Pakistan.
 
 ---
 
+## Full conversation, Urdu, and restaurant (fast food) bot
+
+After the bot answers and says the greeting, it must **respond to what the user says** (questions, orders). The backend uses the **full Telnyx webhook flow** in `callController.handleTelnyxWebhook`: it handles `call.transcription` and runs the conversation orchestrator, then speaks the reply. Make sure your **Telnyx webhook URL** points to **this app** only (e.g. `https://callbot-backend.onrender.com/api/calls/telnyx-webhook`). Do **not** use a separate simple webhook that only answers and never handles transcription.
+
+### 1. Urdu language
+
+- **Business profile** (PUT `/api/businesses/profile`): set  
+  `aiSettings.supportedLanguages = ["ur"]` (or `["ur", "en"]`) and optionally `aiSettings.language = "ur"`.
+- **Greeting in Urdu:** set `conversationSettings.greeting` to your Urdu text, e.g.  
+  `"السلام علیکم! [Your Restaurant] پر کال کرنے کا شکریہ۔ آپ کیا آرڈر کرنا چاہیں گے؟"`
+- The app uses `languageDetector` and Telnyx transcription language `ur` so the bot can listen and reply in Urdu when the business is configured for Urdu.
+
+### 2. Fast food restaurant: orders and details
+
+- **Services:** Create **Service definitions** for your business (e.g. “Burger order”, “Pizza order”) with workflow type `order` and fields like item, quantity, name, phone, address. Use the **Admin API** or your admin UI to create these (e.g. POST to your service-definitions endpoint or seed via MongoDB).
+- **Business type:** Set `businessType` on the business (e.g. `"restaurant"` or `"fast_food"`) so the AI can answer questions about the menu and take orders.
+- **Training data (optional):** Add **training data** entries for the business (menu items, FAQs in Urdu/English) so the AI can answer “What do you have?” and “Give me 2 burgers” correctly and in Urdu.
+
+### 3. Checklist
+
+- [ ] Webhook URL is `.../api/calls/telnyx-webhook` (full flow, not a simple answer-only webhook).
+- [ ] Business profile has `telnyxPhoneNumber`, `telnyxApiKey`, `telnyxConnectionId` and, for Urdu, `supportedLanguages` and Urdu greeting.
+- [ ] At least one **service definition** (e.g. order type) exists for the business.
+- [ ] Call the number: bot should answer, then reply to your speech and support ordering/details in Urdu if configured.
+
+---
+
 ## Links
 
 - [Telnyx Mission Control](https://portal.telnyx.com/)
