@@ -84,7 +84,8 @@ class ConversationOrchestrator {
             business,
             serviceDefinition,
             faqs,
-            conversationHistory
+            conversationHistory,
+            callSession
           );
           
           // If intent detected and service selected, move to data collection
@@ -184,7 +185,8 @@ class ConversationOrchestrator {
   /**
    * Handle intent collection phase
    */
-  async handleIntentCollection(userInput, business, currentService, faqs, conversationHistory) {
+  async handleIntentCollection(userInput, business, currentService, faqs, conversationHistory, callSession = null) {
+    const detectedLanguage = callSession?.detectedLanguage || business.aiSettings?.language || 'en';
     // Get all active services for this business
     const services = await ServiceDefinition.find({
       businessId: business._id,

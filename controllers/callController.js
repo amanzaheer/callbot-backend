@@ -814,10 +814,12 @@ class CallController {
           voice,
           language: transcribeLang === 'en' ? 'en-US' : transcribeLang
         });
-        await telnyxService.transcriptionStart(callControlId, business.telnyxApiKey, {
-          language: transcribeLang
-        });
-        await callSessionService.updateCallStatus(callSession._id, 'in-progress');
+          await telnyxService.transcriptionStart(callControlId, business.telnyxApiKey, {
+            language: transcribeLang
+          });
+          await callSessionService.updateCallStatus(callSession._id, 'in-progress');
+          // So first user message (e.g. "menu") is handled as intent, not greeting again
+          await callSessionService.updateCallState(callSession._id, 'collecting-intent');
         return res.status(200).send('OK');
       }
 
@@ -837,8 +839,12 @@ class CallController {
       }
 
       if (eventType === 'call.transcription') {
-        const transcript = payload.transcription_data?.transcript;
-        const isFinal = payload.transcription_data?.is_final;
+        // Telnyx may send transcript in payload.transcription_data or at top level
+        const transcriptionData = payload.transcription_data || payload;
+        const transcript = (typeof transcriptionData?.transcript === 'string')
+          ? transcriptionData.transcript.trim()
+          : '';
+        const isFinal = transcriptionData?.is_final === true || payload?.is_final === true;
         if (!transcript || !isFinal) return res.status(200).send('OK');
 
         const callSession = await CallSession.findOne({ twilioCallSid: callControlId });
@@ -846,11 +852,14 @@ class CallController {
         const business = await Business.findById(callSession.businessId);
         if (!business) return res.status(200).send('OK');
 
+        logger.info('Telnyx transcription processed', { transcript: transcript.substring(0, 100), callState: callSession.callState });
         const response = await conversationOrchestrator.processUserInput(
           callSession._id.toString(),
           transcript
         );
 
+        const speakText = (response.text && String(response.text).trim()) || "I didn't catch that. Could you please repeat?";
+        logger.info('Telnyx bot reply', { replyLength: speakText.length, callState: response.callState });
         const LanguageDetector = require('../utils/languageDetector');
         const lang = callSession.detectedLanguage || business.aiSettings?.supportedLanguages?.[0] || 'en';
         const voice = telnyxService.constructor.getTelnyxVoice(
@@ -858,7 +867,7 @@ class CallController {
         );
         const speakLang = telnyxService.constructor.getTelnyxTranscriptionLanguage(lang);
 
-        await telnyxService.speak(callControlId, response.text, business.telnyxApiKey, {
+        await telnyxService.speak(callControlId, speakText, business.telnyxApiKey, {
           voice,
           language: speakLang === 'en' ? 'en-US' : speakLang
         });
