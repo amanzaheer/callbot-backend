@@ -1,0 +1,148 @@
+{
+  "business": {
+    "name": "Premier Real Estate",
+    "email": "info@premierrealestate.com",
+    "phone": "+1234567890",
+    "businessType": "real_estate",
+    "conversationSettings": {
+      "greeting": "Hello! Thank you for calling Premier Real Estate. I can help you schedule a property viewing, get information about listings, or connect you with an agent. How can I help?",
+      "closing": "Thank you for your interest! One of our agents will contact you shortly. Have a great day!",
+      "enableHumanTransfer": true,
+      "humanTransferPhone": "+1234567891"
+    }
+  },
+  "services": [
+    {
+      "name": "Property Viewing",
+      "description": "Schedule a viewing for a property",
+      "category": "Viewings",
+      "workflowType": "booking",
+      "fields": [
+        {
+          "name": "propertyAddress",
+          "label": "Property Address",
+          "type": "address",
+          "required": true,
+          "order": 1
+        },
+        {
+          "name": "date",
+          "label": "Preferred Date",
+          "type": "date",
+          "required": true,
+          "order": 2
+        },
+        {
+          "name": "time",
+          "label": "Preferred Time",
+          "type": "time",
+          "required": true,
+          "order": 3
+        },
+        {
+          "name": "name",
+          "label": "Your Name",
+          "type": "text",
+          "required": true,
+          "order": 4
+        },
+        {
+          "name": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true,
+          "order": 5
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "type": "email",
+          "required": true,
+          "order": 6
+        }
+      ],
+      "pricing": null
+    },
+    {
+      "name": "Lead Generation",
+      "description": "Get information about properties matching your criteria",
+      "category": "Leads",
+      "workflowType": "lead",
+      "fields": [
+        {
+          "name": "name",
+          "label": "Your Name",
+          "type": "text",
+          "required": true,
+          "order": 1
+        },
+        {
+          "name": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true,
+          "order": 2
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "type": "email",
+          "required": true,
+          "order": 3
+        },
+        {
+          "name": "propertyType",
+          "label": "Property Type",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": ["house", "apartment", "condo", "townhouse", "commercial"]
+          },
+          "order": 4
+        },
+        {
+          "name": "budget",
+          "label": "Budget Range",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": ["under 200k", "200k-400k", "400k-600k", "600k-800k", "over 800k"]
+          },
+          "order": 5
+        },
+        {
+          "name": "location",
+          "label": "Preferred Location",
+          "type": "text",
+          "required": false,
+          "order": 6
+        }
+      ],
+      "pricing": null
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What areas do you serve?",
+      "answer": "We serve the entire metropolitan area including downtown, suburbs, and surrounding neighborhoods. Our agents are familiar with all local markets.",
+      "keywords": ["area", "location", "serve", "coverage"],
+      "category": "General",
+      "priority": 1
+    },
+    {
+      "question": "How do I schedule a viewing?",
+      "answer": "You can schedule a viewing by calling us or using our online system. We typically need at least 24 hours notice to coordinate with property owners.",
+      "keywords": ["viewing", "schedule", "appointment", "tour"],
+      "category": "Services",
+      "priority": 1
+    },
+    {
+      "question": "Do you help with financing?",
+      "answer": "Yes, we work with several trusted lenders and can help you get pre-approved for a mortgage. We also offer guidance on down payments and closing costs.",
+      "keywords": ["financing", "mortgage", "loan", "pre-approval"],
+      "category": "Services",
+      "priority": 2
+    }
+  ]
+}
+

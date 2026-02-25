@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "test-calls-collection",
+		"name": "Test Calls (Free - No Phone Needed)",
+		"description": "Test AI Call Bot without real phone numbers - 100% free!",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Start Test Call",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    var jsonData = pm.response.json();",
+							"    if (jsonData.callSessionId) {",
+							"        pm.environment.set(\"test_call_session_id\", jsonData.callSessionId);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"to\": \"+923219296932\",\n    \"serviceId\": \"\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/test-calls/start",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"test-calls",
+						"start"
+					]
+				},
+				"description": "Start a simulated test call (no real phone needed!)"
+			},
+			"response": []
+		},
+		{
+			"name": "Send Message (Simulate User Speaking)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"I want to order a pizza\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/test-calls/:callSessionId/input",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"test-calls",
+						":callSessionId",
+						"input"
+					],
+					"variable": [
+						{
+							"key": "callSessionId",
+							"value": "{{test_call_session_id}}",
+							"description": "Call Session ID from Start Test Call"
+						}
+					]
+				},
+				"description": "Send a message to simulate user speaking. Keep sending messages to continue conversation."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Test Call Status",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/test-calls/:callSessionId/status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"test-calls",
+						":callSessionId",
+						"status"
+					],
+					"variable": [
+						{
+							"key": "callSessionId",
+							"value": "{{test_call_session_id}}",
+							"description": "Call Session ID"
+						}
+					]
+				},
+				"description": "Get test call status and full conversation history"
+			},
+			"response": []
+		},
+		{
+			"name": "End Test Call",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/test-calls/:callSessionId/end",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"test-calls",
+						":callSessionId",
+						"end"
+					],
+					"variable": [
+						{
+							"key": "callSessionId",
+							"value": "{{test_call_session_id}}",
+							"description": "Call Session ID"
+						}
+					]
+				},
+				"description": "End the test call"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_call_session_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

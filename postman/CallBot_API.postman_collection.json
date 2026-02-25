@@ -1,0 +1,1032 @@
+{
+	"info": {
+		"_postman_id": "callbot-api-collection",
+		"name": "Universal AI Call Bot API",
+		"description": "Complete API collection for Universal AI Call Bot Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Business",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.token);",
+									"        pm.environment.set(\"business_id\", jsonData.business.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Restaurant\",\n    \"email\": \"restaurant@example.com\",\n    \"password\": \"securepassword123\",\n    \"phone\": \"+1234567890\",\n    \"businessType\": \"restaurant\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new business account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.token);",
+									"        pm.environment.set(\"business_id\", jsonData.business.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"restaurant@example.com\",\n    \"password\": \"securepassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login and get JWT token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints"
+		},
+		{
+			"name": "Business Management",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/businesses/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"profile"
+							]
+						},
+						"description": "Get current business profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"conversationSettings\": {\n        \"greeting\": \"Hello! Welcome to My Restaurant. How can I help you today?\",\n        \"closing\": \"Thank you for calling! Have a great day!\",\n        \"enableHumanTransfer\": true,\n        \"humanTransferPhone\": \"+1234567891\"\n    },\n    \"aiSettings\": {\n        \"model\": \"gpt-4-turbo-preview\",\n        \"temperature\": 0.7,\n        \"maxTokens\": 500,\n        \"language\": \"en\",\n        \"voice\": \"alloy\"\n    },\n    \"operatingHours\": {\n        \"monday\": {\n            \"open\": \"09:00\",\n            \"close\": \"21:00\",\n            \"closed\": false\n        },\n        \"tuesday\": {\n            \"open\": \"09:00\",\n            \"close\": \"21:00\",\n            \"closed\": false\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"profile"
+							]
+						},
+						"description": "Update business profile and settings"
+					},
+					"response": []
+				}
+			],
+			"description": "Business profile management"
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "Create Service - Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Pizza Margherita\",\n    \"description\": \"Classic Italian pizza with tomato, mozzarella, and basil\",\n    \"category\": \"Pizza\",\n    \"workflowType\": \"order\",\n    \"fields\": [\n        {\n            \"name\": \"quantity\",\n            \"label\": \"How many pizzas?\",\n            \"type\": \"number\",\n            \"required\": true,\n            \"validation\": {\n                \"min\": 1,\n                \"max\": 10\n            },\n            \"order\": 1\n        },\n        {\n            \"name\": \"size\",\n            \"label\": \"What size?\",\n            \"type\": \"select\",\n            \"required\": true,\n            \"validation\": {\n                \"options\": [\"small\", \"medium\", \"large\", \"extra-large\"]\n            },\n            \"order\": 2\n        },\n        {\n            \"name\": \"deliveryAddress\",\n            \"label\": \"Delivery Address\",\n            \"type\": \"address\",\n            \"required\": true,\n            \"order\": 3\n        },\n        {\n            \"name\": \"specialInstructions\",\n            \"label\": \"Special Instructions\",\n            \"type\": \"textarea\",\n            \"required\": false,\n            \"order\": 4\n        }\n    ],\n    \"pricing\": {\n        \"basePrice\": 15.99,\n        \"currency\": \"USD\",\n        \"variablePricing\": true,\n        \"pricingRules\": {\n            \"quantityMultiplier\": true,\n            \"fieldBasedPricing\": {\n                \"size\": {\n                    \"small\": 0,\n                    \"medium\": 3,\n                    \"large\": 6,\n                    \"extra-large\": 10\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/services",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"services"
+							]
+						},
+						"description": "Create a new service for orders"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Service - Booking",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Table Reservation\",\n    \"description\": \"Reserve a table for dining\",\n    \"category\": \"Reservations\",\n    \"workflowType\": \"booking\",\n    \"fields\": [\n        {\n            \"name\": \"date\",\n            \"label\": \"Date\",\n            \"type\": \"date\",\n            \"required\": true,\n            \"order\": 1\n        },\n        {\n            \"name\": \"time\",\n            \"label\": \"Time\",\n            \"type\": \"time\",\n            \"required\": true,\n            \"order\": 2\n        },\n        {\n            \"name\": \"numberOfGuests\",\n            \"label\": \"Number of Guests\",\n            \"type\": \"number\",\n            \"required\": true,\n            \"validation\": {\n                \"min\": 1,\n                \"max\": 20\n            },\n            \"order\": 3\n        },\n        {\n            \"name\": \"name\",\n            \"label\": \"Your Name\",\n            \"type\": \"text\",\n            \"required\": true,\n            \"order\": 4\n        },\n        {\n            \"name\": \"phone\",\n            \"label\": \"Phone Number\",\n            \"type\": \"phone\",\n            \"required\": true,\n            \"order\": 5\n        }\n    ],\n    \"availability\": {\n        \"enabled\": true,\n        \"maxBookingsPerSlot\": 5,\n        \"advanceBookingDays\": 30\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/services",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"services"
+							]
+						},
+						"description": "Create a booking service"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Services",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/businesses/services",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"services"
+							]
+						},
+						"description": "Get all services for the business"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Service",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricing\": {\n        \"basePrice\": 19.99\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/services/:serviceId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"services",
+								":serviceId"
+							],
+							"variable": [
+								{
+									"key": "serviceId",
+									"value": "",
+									"description": "Service ID from Get All Services response"
+								}
+							]
+						},
+						"description": "Update a service"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Service",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/businesses/services/:serviceId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"services",
+								":serviceId"
+							],
+							"variable": [
+								{
+									"key": "serviceId",
+									"value": "",
+									"description": "Service ID"
+								}
+							]
+						},
+						"description": "Delete (deactivate) a service"
+					},
+					"response": []
+				}
+			],
+			"description": "Service definition management"
+		},
+		{
+			"name": "FAQs",
+			"item": [
+				{
+					"name": "Create FAQ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\": \"What are your opening hours?\",\n    \"answer\": \"We're open Monday through Saturday from 11 AM to 10 PM, and Sunday from 12 PM to 9 PM.\",\n    \"keywords\": [\"hours\", \"open\", \"time\", \"when\"],\n    \"category\": \"General\",\n    \"priority\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/faqs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"faqs"
+							]
+						},
+						"description": "Create a new FAQ"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All FAQs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/businesses/faqs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"faqs"
+							]
+						},
+						"description": "Get all FAQs"
+					},
+					"response": []
+				},
+				{
+					"name": "Update FAQ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answer\": \"We're open Monday through Saturday from 9 AM to 11 PM.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/businesses/faqs/:faqId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"faqs",
+								":faqId"
+							],
+							"variable": [
+								{
+									"key": "faqId",
+									"value": "",
+									"description": "FAQ ID from Get All FAQs response"
+								}
+							]
+						},
+						"description": "Update an FAQ"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete FAQ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/businesses/faqs/:faqId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"businesses",
+								"faqs",
+								":faqId"
+							],
+							"variable": [
+								{
+									"key": "faqId",
+									"value": "",
+									"description": "FAQ ID"
+								}
+							]
+						},
+						"description": "Delete (deactivate) an FAQ"
+					},
+					"response": []
+				}
+			],
+			"description": "FAQ management"
+		},
+		{
+			"name": "Calls",
+			"item": [
+				{
+					"name": "Make Outgoing Call",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"to\": \"+1987654321\",\n    \"serviceId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/calls/outgoing",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"calls",
+								"outgoing"
+							]
+						},
+						"description": "Make an outgoing call (optional serviceId)"
+					},
+					"response": []
+				}
+			],
+			"description": "Call management"
+		},
+		{
+			"name": "Admin - Calls",
+			"item": [
+				{
+					"name": "Get All Calls",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/calls?page=1&limit=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"calls"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "Items per page"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"description": "Filter by status (initiated, completed, failed, etc.)",
+									"disabled": true
+								},
+								{
+									"key": "intent",
+									"value": "",
+									"description": "Filter by intent (order, booking, inquiry, etc.)",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Filter from date (ISO format)",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Filter to date (ISO format)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all calls with optional filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Call Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/calls/:callId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"calls",
+								":callId"
+							],
+							"variable": [
+								{
+									"key": "callId",
+									"value": "",
+									"description": "Call Session ID from Get All Calls response"
+								}
+							]
+						},
+						"description": "Get call details with full transcript"
+					},
+					"response": []
+				}
+			],
+			"description": "Call management and viewing"
+		},
+		{
+			"name": "Admin - Interactions",
+			"item": [
+				{
+					"name": "Get All Interactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/interactions?page=1&limit=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"interactions"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "recordType",
+									"value": "",
+									"description": "Filter by type (order, booking, inquiry, etc.)",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"description": "Filter by status (pending, confirmed, etc.)",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Filter from date",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Filter to date",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all interaction records (orders, bookings, leads)"
+					},
+					"response": []
+				}
+			],
+			"description": "Interaction record management"
+		},
+		{
+			"name": "Admin - Customers",
+			"item": [
+				{
+					"name": "Get All Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/customers?page=1&limit=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search by name, phone, or email",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all customers"
+					},
+					"response": []
+				}
+			],
+			"description": "Customer management"
+		},
+		{
+			"name": "Admin - Analytics",
+			"item": [
+				{
+					"name": "Get Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/analytics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"analytics"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Start date (ISO format)",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "End date (ISO format)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get analytics dashboard data"
+					},
+					"response": []
+				}
+			],
+			"description": "Analytics and reporting"
+		},
+		{
+			"name": "Admin - Export",
+			"item": [
+				{
+					"name": "Export Calls",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/export?type=calls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"export"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "calls",
+									"description": "Export type: calls, interactions, or customers"
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Filter from date",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Filter to date",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Export data as JSON"
+					},
+					"response": []
+				},
+				{
+					"name": "Export Interactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/export?type=interactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"export"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "interactions"
+								}
+							]
+						},
+						"description": "Export interactions as JSON"
+					},
+					"response": []
+				},
+				{
+					"name": "Export Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/export?type=customers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"export"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "customers"
+								}
+							]
+						},
+						"description": "Export customers as JSON"
+					},
+					"response": []
+				}
+			],
+			"description": "Data export"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if server is running"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "business_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

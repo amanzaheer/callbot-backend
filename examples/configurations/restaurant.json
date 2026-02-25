@@ -1,0 +1,152 @@
+{
+  "business": {
+    "name": "Bella Italia Restaurant",
+    "email": "info@bellaitalia.com",
+    "phone": "+1234567890",
+    "businessType": "restaurant",
+    "conversationSettings": {
+      "greeting": "Hello! Welcome to Bella Italia. I can help you place an order or make a reservation. How can I assist you today?",
+      "closing": "Thank you for choosing Bella Italia! Your order will be ready soon. Have a great day!",
+      "enableHumanTransfer": true,
+      "humanTransferPhone": "+1234567891"
+    }
+  },
+  "services": [
+    {
+      "name": "Pizza Margherita",
+      "description": "Classic Italian pizza with tomato, mozzarella, and basil",
+      "category": "Pizza",
+      "workflowType": "order",
+      "fields": [
+        {
+          "name": "quantity",
+          "label": "Quantity",
+          "type": "number",
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 10
+          },
+          "order": 1
+        },
+        {
+          "name": "size",
+          "label": "Size",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": ["small", "medium", "large", "extra-large"]
+          },
+          "order": 2
+        },
+        {
+          "name": "deliveryAddress",
+          "label": "Delivery Address",
+          "type": "address",
+          "required": true,
+          "order": 3
+        },
+        {
+          "name": "specialInstructions",
+          "label": "Special Instructions",
+          "type": "textarea",
+          "required": false,
+          "order": 4
+        }
+      ],
+      "pricing": {
+        "basePrice": 15.99,
+        "currency": "USD",
+        "variablePricing": true,
+        "pricingRules": {
+          "quantityMultiplier": true,
+          "fieldBasedPricing": {
+            "size": {
+              "small": 0,
+              "medium": 3,
+              "large": 6,
+              "extra-large": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Table Reservation",
+      "description": "Reserve a table for dining",
+      "category": "Reservations",
+      "workflowType": "booking",
+      "fields": [
+        {
+          "name": "date",
+          "label": "Date",
+          "type": "date",
+          "required": true,
+          "order": 1
+        },
+        {
+          "name": "time",
+          "label": "Time",
+          "type": "time",
+          "required": true,
+          "order": 2
+        },
+        {
+          "name": "numberOfGuests",
+          "label": "Number of Guests",
+          "type": "number",
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 20
+          },
+          "order": 3
+        },
+        {
+          "name": "name",
+          "label": "Your Name",
+          "type": "text",
+          "required": true,
+          "order": 4
+        },
+        {
+          "name": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true,
+          "order": 5
+        }
+      ],
+      "pricing": null,
+      "availability": {
+        "enabled": true,
+        "maxBookingsPerSlot": 5,
+        "advanceBookingDays": 30
+      }
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What are your opening hours?",
+      "answer": "We're open Monday through Saturday from 11 AM to 10 PM, and Sunday from 12 PM to 9 PM.",
+      "keywords": ["hours", "open", "time", "when"],
+      "category": "General",
+      "priority": 1
+    },
+    {
+      "question": "Do you offer delivery?",
+      "answer": "Yes, we offer delivery within a 5-mile radius. Delivery fee is $3.99 and takes approximately 30-45 minutes.",
+      "keywords": ["delivery", "deliver", "takeout"],
+      "category": "Services",
+      "priority": 1
+    },
+    {
+      "question": "Do you have vegetarian options?",
+      "answer": "Absolutely! We have a wide variety of vegetarian pizzas, pasta dishes, and salads. Just ask and we'll be happy to help you choose.",
+      "keywords": ["vegetarian", "veggie", "vegan", "dietary"],
+      "category": "Menu",
+      "priority": 2
+    }
+  ]
+}
+

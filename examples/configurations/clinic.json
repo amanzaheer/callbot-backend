@@ -1,0 +1,156 @@
+{
+  "business": {
+    "name": "HealthCare Medical Clinic",
+    "email": "info@healthcareclinic.com",
+    "phone": "+1234567890",
+    "businessType": "clinic",
+    "conversationSettings": {
+      "greeting": "Hello! Thank you for calling HealthCare Medical Clinic. I can help you schedule an appointment or answer questions. How may I assist you?",
+      "closing": "Your appointment has been confirmed. We'll send you a reminder 24 hours before. Take care!",
+      "enableHumanTransfer": true,
+      "humanTransferPhone": "+1234567891"
+    }
+  },
+  "services": [
+    {
+      "name": "General Consultation",
+      "description": "Routine check-up with a general practitioner",
+      "category": "Consultations",
+      "workflowType": "booking",
+      "fields": [
+        {
+          "name": "date",
+          "label": "Preferred Date",
+          "type": "date",
+          "required": true,
+          "order": 1
+        },
+        {
+          "name": "time",
+          "label": "Preferred Time",
+          "type": "time",
+          "required": true,
+          "order": 2
+        },
+        {
+          "name": "name",
+          "label": "Patient Name",
+          "type": "text",
+          "required": true,
+          "order": 3
+        },
+        {
+          "name": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true,
+          "order": 4
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "type": "email",
+          "required": true,
+          "order": 5
+        },
+        {
+          "name": "reason",
+          "label": "Reason for Visit",
+          "type": "textarea",
+          "required": false,
+          "order": 6
+        },
+        {
+          "name": "insurance",
+          "label": "Insurance Provider",
+          "type": "text",
+          "required": false,
+          "order": 7
+        }
+      ],
+      "pricing": {
+        "basePrice": 150,
+        "currency": "USD"
+      },
+      "availability": {
+        "enabled": true,
+        "maxBookingsPerSlot": 1,
+        "advanceBookingDays": 90
+      }
+    },
+    {
+      "name": "Lab Test Appointment",
+      "description": "Schedule blood work or other lab tests",
+      "category": "Lab Services",
+      "workflowType": "booking",
+      "fields": [
+        {
+          "name": "date",
+          "label": "Preferred Date",
+          "type": "date",
+          "required": true,
+          "order": 1
+        },
+        {
+          "name": "time",
+          "label": "Preferred Time",
+          "type": "time",
+          "required": true,
+          "order": 2
+        },
+        {
+          "name": "name",
+          "label": "Patient Name",
+          "type": "text",
+          "required": true,
+          "order": 3
+        },
+        {
+          "name": "testType",
+          "label": "Type of Test",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": ["blood work", "urine test", "x-ray", "mri", "other"]
+          },
+          "order": 4
+        },
+        {
+          "name": "fasting",
+          "label": "Fasting Required",
+          "type": "boolean",
+          "required": false,
+          "order": 5
+        }
+      ],
+      "pricing": {
+        "basePrice": 75,
+        "currency": "USD"
+      }
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What are your clinic hours?",
+      "answer": "We're open Monday through Friday from 8 AM to 6 PM, and Saturday from 9 AM to 2 PM. We're closed on Sundays.",
+      "keywords": ["hours", "open", "time"],
+      "category": "General",
+      "priority": 1
+    },
+    {
+      "question": "Do you accept insurance?",
+      "answer": "Yes, we accept most major insurance plans including Blue Cross, Aetna, and Cigna. Please have your insurance card ready when you visit.",
+      "keywords": ["insurance", "coverage", "accept"],
+      "category": "Billing",
+      "priority": 1
+    },
+    {
+      "question": "How do I prepare for a lab test?",
+      "answer": "For most blood tests, you'll need to fast for 8-12 hours before your appointment. Please drink plenty of water and avoid food. Your doctor will provide specific instructions if needed.",
+      "keywords": ["lab", "test", "prepare", "fasting"],
+      "category": "Services",
+      "priority": 2
+    }
+  ]
+}
+
