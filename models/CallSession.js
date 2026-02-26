@@ -117,12 +117,8 @@ const callSessionSchema = new mongoose.Schema({
   recordingUrl: String,
   recordingSid: String,
 
-  // Error Tracking
-  callErrors: [{
-    timestamp: Date,
-    message: String,
-    type: String
-  }],
+  // Error Tracking (array of strings: "ISO-date [type] message")
+  callErrors: [String],
 
   // Metadata
   metadata: mongoose.Schema.Types.Mixed

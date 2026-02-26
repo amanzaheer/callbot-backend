@@ -853,10 +853,23 @@ class CallController {
         if (!business) return res.status(200).send('OK');
 
         logger.info('Telnyx transcription processed', { transcript: transcript.substring(0, 100), callState: callSession.callState });
-        const response = await conversationOrchestrator.processUserInput(
-          callSession._id.toString(),
-          transcript
-        );
+        let response;
+        try {
+          response = await conversationOrchestrator.processUserInput(
+            callSession._id.toString(),
+            transcript
+          );
+        } catch (err) {
+          const isQuotaOrApi = err.response?.status === 429 || err.status === 429 ||
+            err.code === 'insufficient_quota' || (err.message && err.message.includes('quota'));
+          logger.error('Conversation error (fallback will be spoken)', { message: err.message, isQuotaOrApi });
+          response = {
+            text: isQuotaOrApi
+              ? "Sorry, our AI service is temporarily over limit. Please try again in a few minutes, or add credits to your OpenAI account."
+              : "Sorry, I had a small hiccup. Please say that again.",
+            callState: callSession.callState
+          };
+        }
 
         const speakText = (response.text && String(response.text).trim()) || "I didn't catch that. Could you please repeat?";
         logger.info('Telnyx bot reply', { replyLength: speakText.length, callState: response.callState });

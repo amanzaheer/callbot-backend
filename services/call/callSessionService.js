@@ -204,18 +204,14 @@ class CallSessionService {
   }
 
   /**
-   * Record error
+   * Record error (store a single string per entry to avoid schema cast issues)
    */
   async recordError(callSessionId, message, type = 'error') {
     try {
+      const text = typeof message === 'string' ? message : (message?.message || String(message));
+      const entry = `${new Date().toISOString()} [${type}] ${text}`;
       await CallSession.findByIdAndUpdate(callSessionId, {
-        $push: {
-          callErrors: {
-            timestamp: new Date(),
-            message,
-            type
-          }
-        }
+        $push: { callErrors: entry }
       });
     } catch (error) {
       logger.error('Record error error:', error);
