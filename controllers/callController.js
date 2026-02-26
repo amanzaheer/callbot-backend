@@ -839,13 +839,26 @@ class CallController {
       }
 
       if (eventType === 'call.transcription') {
-        // Telnyx may send transcript in payload.transcription_data or at top level
-        const transcriptionData = payload.transcription_data || payload;
-        const transcript = (typeof transcriptionData?.transcript === 'string')
-          ? transcriptionData.transcript.trim()
-          : '';
-        // Some Telnyx engines may not send is_final; if transcript exists, treat it as usable
-        if (!transcript) return res.status(200).send('OK');
+        // Telnyx: transcript can be in payload.transcription_data.transcript or payload.transcript
+        const data = payload.transcription_data || body.transcription_data || payload;
+        let transcript = '';
+        if (typeof data?.transcript === 'string') {
+          transcript = data.transcript.trim();
+        } else if (typeof payload?.transcript === 'string') {
+          transcript = payload.transcript.trim();
+        }
+        // Optional: join words array if Telnyx sends that instead
+        if (!transcript && Array.isArray(data?.words) && data.words.length > 0) {
+          transcript = data.words.map(w => (w.word ?? w.text ?? w)).filter(Boolean).join(' ').trim();
+        }
+        if (!transcript) {
+          logger.info('Telnyx call.transcription skipped (no transcript)', {
+            hasTranscriptionData: !!(payload.transcription_data || body.transcription_data),
+            payloadKeys: payload ? Object.keys(payload) : [],
+            bodyKeys: body ? Object.keys(body) : []
+          });
+          return res.status(200).send('OK');
+        }
 
         const callSession = await CallSession.findOne({ twilioCallSid: callControlId });
         if (!callSession) return res.status(200).send('OK');
