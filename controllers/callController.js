@@ -844,23 +844,55 @@ class CallController {
       }
 
       if (eventType === 'call.transcription') {
-        // Telnyx: transcript can be in payload.transcription_data.transcript or payload.transcript
+        // Telnyx: transcript can be in various shapes (transcript, transcription_text, channel object, words array)
         const data = payload.transcription_data || body.transcription_data || payload;
         let transcript = '';
         if (typeof data?.transcript === 'string') {
           transcript = data.transcript.trim();
+        } else if (typeof data?.transcription_text === 'string') {
+          transcript = data.transcription_text.trim();
+        } else if (typeof data?.TranscriptionText === 'string') {
+          transcript = data.TranscriptionText.trim();
         } else if (typeof payload?.transcript === 'string') {
           transcript = payload.transcript.trim();
         }
-        // Optional: join words array if Telnyx sends that instead
+        // Channel-shaped: e.g. { inbound: { transcript: "..." } } or { outbound: { ... } }
+        if (!transcript && data && typeof data === 'object' && !Array.isArray(data)) {
+          const channel = data.inbound || data.outbound || data.channel;
+          if (channel && typeof channel.transcript === 'string') transcript = channel.transcript.trim();
+          else if (channel && typeof channel.transcription_text === 'string') transcript = channel.transcription_text.trim();
+          else if (channel && typeof channel.TranscriptionText === 'string') transcript = channel.TranscriptionText.trim();
+        }
+        // transcription_data may be array of channel results
+        if (!transcript && Array.isArray(data) && data.length > 0) {
+          const first = data[0];
+          const t = first?.transcript || first?.transcription_text || first?.TranscriptionText;
+          if (typeof t === 'string') transcript = t.trim();
+        }
+        // Any sub-object of data (e.g. first-level value that is { transcript: "..." })
+        if (!transcript && data && typeof data === 'object' && !Array.isArray(data)) {
+          for (const value of Object.values(data)) {
+            if (value && typeof value === 'object' && typeof value.transcript === 'string') {
+              transcript = value.transcript.trim();
+              break;
+            }
+            if (value && typeof value === 'object' && typeof value.transcription_text === 'string') {
+              transcript = value.transcription_text.trim();
+              break;
+            }
+          }
+        }
+        // Words array
         if (!transcript && Array.isArray(data?.words) && data.words.length > 0) {
           transcript = data.words.map(w => (w.word ?? w.text ?? w)).filter(Boolean).join(' ').trim();
         }
         if (!transcript) {
+          const dataKeys = data && typeof data === 'object' ? Object.keys(data) : [];
+          const dataSample = data && typeof data === 'object' ? JSON.stringify(data).slice(0, 600) : '';
           logger.info('Telnyx call.transcription skipped (no transcript)', {
             hasTranscriptionData: !!(payload.transcription_data || body.transcription_data),
-            payloadKeys: payload ? Object.keys(payload) : [],
-            bodyKeys: body ? Object.keys(body) : []
+            transcriptionDataKeys: dataKeys,
+            transcriptionDataSample: dataSample
           });
           return res.status(200).send('OK');
         }

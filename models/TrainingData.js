@@ -58,7 +58,9 @@ const trainingDataSchema = new mongoose.Schema({
   language: {
     type: String,
     default: 'en',
-    index: true
+    index: true,
+    enum: ['en', 'ur', 'ar', 'es', 'fr', 'de', 'hi', 'zh', 'zh-CN', 'pt', 'tr', 'fa', 'id', 'th', 'vi'],
+    trim: true
   },
   priority: {
     type: Number,

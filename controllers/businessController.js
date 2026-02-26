@@ -388,15 +388,29 @@ class BusinessController {
         });
       }
 
+      const hasUrdu = trainingData.some(item => (item.language || '').toLowerCase() === 'ur');
+      if (hasUrdu && req.business) {
+        const supported = req.business.aiSettings?.supportedLanguages || ['en'];
+        if (!supported.includes('ur')) {
+          await Business.findByIdAndUpdate(req.businessId, {
+            $addToSet: { 'aiSettings.supportedLanguages': 'ur' }
+          });
+        }
+      }
+
       const created = [];
       const errors = [];
 
       for (const item of trainingData) {
         try {
-          const trainingItem = await TrainingData.create({
-            businessId: req.businessId,
-            ...item
-          });
+          const payload = { businessId: req.businessId, ...item };
+          if (payload.language && typeof payload.language === 'string') {
+            payload.language = payload.language.trim().toLowerCase();
+            if (payload.language === 'ur' || payload.language === 'en') {
+              // Explicitly allow Urdu and English
+            }
+          }
+          const trainingItem = await TrainingData.create(payload);
           created.push(trainingItem);
         } catch (error) {
           errors.push({
