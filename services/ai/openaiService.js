@@ -58,7 +58,7 @@ class OpenAIService {
   async generateResponse(messages, systemPrompt, options = {}) {
     try {
       const {
-        model = 'gpt-4-turbo-preview',
+        model = 'gpt-4.1-mini',
         temperature = 0.7,
         maxTokens = 500,
         jsonMode = false
@@ -114,7 +114,7 @@ class OpenAIService {
       ];
 
       const response = await this.generateResponse(messages, systemPrompt, {
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4.1-mini',
         temperature: 0.3,
         maxTokens: 300,
         jsonMode: true

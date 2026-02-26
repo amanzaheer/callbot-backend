@@ -844,8 +844,8 @@ class CallController {
         const transcript = (typeof transcriptionData?.transcript === 'string')
           ? transcriptionData.transcript.trim()
           : '';
-        const isFinal = transcriptionData?.is_final === true || payload?.is_final === true;
-        if (!transcript || !isFinal) return res.status(200).send('OK');
+        // Some Telnyx engines may not send is_final; if transcript exists, treat it as usable
+        if (!transcript) return res.status(200).send('OK');
 
         const callSession = await CallSession.findOne({ twilioCallSid: callControlId });
         if (!callSession) return res.status(200).send('OK');
