@@ -860,9 +860,11 @@ class CallController {
             transcript
           );
         } catch (err) {
-          const isQuotaOrApi = err.response?.status === 429 || err.status === 429 ||
-            err.code === 'insufficient_quota' || (err.message && err.message.includes('quota'));
-          logger.error('Conversation error (fallback will be spoken)', { message: err.message, isQuotaOrApi });
+          const status = err.status ?? err.response?.status;
+          const code = err.code ?? err.cause?.code;
+          const isQuotaOrApi = status === 429 || code === 'insufficient_quota' ||
+            (err.message && err.message.includes('quota'));
+          logger.error('Conversation error (fallback will be spoken)', { message: err.message, status, code, isQuotaOrApi });
           response = {
             text: isQuotaOrApi
               ? "Sorry, our AI service is temporarily over limit. Please try again in a few minutes, or add credits to your OpenAI account."

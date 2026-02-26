@@ -95,7 +95,15 @@ class OpenAIService {
       return { text: content };
     } catch (error) {
       logger.error('OpenAI chat completion error:', error);
-      throw new Error('Failed to generate AI response');
+      // Keep status/code so call controller can show quota message
+      const status = error.status ?? error.response?.status;
+      const code = error.code ?? error.response?.data?.error?.code;
+      const msg = error.message || 'Failed to generate AI response';
+      const e = new Error(msg);
+      e.status = status;
+      e.code = code;
+      e.cause = error;
+      throw e;
     }
   }
 
