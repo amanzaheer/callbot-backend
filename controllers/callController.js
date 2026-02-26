@@ -780,10 +780,15 @@ class CallController {
             voice,
             language: transcribeLang === 'en' ? 'en-US' : transcribeLang
           });
-          await telnyxService.transcriptionStart(callControlId, business.telnyxApiKey, {
-            language: transcribeLang
-          });
+          try {
+            await telnyxService.transcriptionStart(callControlId, business.telnyxApiKey, {
+              language: transcribeLang
+            });
+          } catch (transcribeErr) {
+            logger.warn('Transcription start failed (call will continue without speech-to-text)', { message: transcribeErr.message });
+          }
           await callSessionService.updateCallStatus(callSession._id, 'in-progress');
+          await callSessionService.updateCallState(callSession._id, 'collecting-intent');
         }
 
         return res.status(200).send('OK');

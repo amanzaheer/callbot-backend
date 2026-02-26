@@ -108,10 +108,16 @@ class TelnyxService {
         }
       );
     } catch (error) {
+      const status = error.response?.status;
       const data = error.response?.data;
       const alreadyInProgress = data?.errors?.[0]?.code === '90054';
-      if (error.response?.status === 422 && alreadyInProgress) {
+      if (status === 422 && alreadyInProgress) {
         logger.info('Telnyx transcription already in progress, skipping');
+        return;
+      }
+      // 503/502/504 = Telnyx transcription service temporarily unavailable; don't kill the call
+      if (status === 503 || status === 502 || status === 504) {
+        logger.warn('Telnyx transcription temporarily unavailable', { status, detail: data?.errors?.[0]?.detail });
         return;
       }
       logger.error('Telnyx transcription_start error:', data || error.message);
