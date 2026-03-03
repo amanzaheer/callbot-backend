@@ -83,9 +83,11 @@ class LanguageDetector {
      */
     static getVoiceForLanguage(language, provider = 'vonage') {
         if (provider === 'vonage') {
+            // Vonage TTS voice names (mapped per language)
+            // Use a **male** voice for Urdu for a more natural "real man" sound.
             const voiceMap = {
                 'en': 'Amy',
-                'ur': 'Amy', // Vonage may not have Urdu-specific voice, use default
+                'ur': 'Brian', // switch Urdu from female (Amy) to male (Brian)
                 'ar': 'Laila',
                 'es': 'Enrique',
                 'fr': 'Mathieu',
@@ -96,10 +98,11 @@ class LanguageDetector {
             return voiceMap[language] || 'Amy';
         }
 
-        // Twilio voices
+        // Twilio voices (generic voice selector)
+        // Use a **male** voice for Urdu calls.
         const twilioVoiceMap = {
             'en': 'alice',
-            'ur': 'alice',
+            'ur': 'man',
             'ar': 'alice',
             'es': 'alice',
             'fr': 'alice',

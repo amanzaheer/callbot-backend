@@ -151,7 +151,16 @@ class TelnyxService {
    * Map our voice name to Telnyx speak voice
    */
   static getTelnyxVoice(voiceName) {
-    const map = { female: 'female', male: 'male', alice: 'female', woman: 'female', man: 'male' };
+    const map = {
+      female: 'female',
+      male: 'male',
+      alice: 'female',
+      woman: 'female',
+      man: 'male',
+      brian: 'male',
+      justin: 'male',
+      alloy: 'female'
+    };
     return map[String(voiceName).toLowerCase()] || 'female';
   }
 

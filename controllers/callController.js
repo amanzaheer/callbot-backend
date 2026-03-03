@@ -770,9 +770,8 @@ class CallController {
           const lang = business.aiSettings?.supportedLanguages?.[0] || business.aiSettings?.language || 'en';
           const greeting = business.conversationSettings?.greeting ||
             LanguageDetector.getGreeting(lang, business.name);
-          const voice = telnyxService.constructor.getTelnyxVoice(
-            LanguageDetector.getVoiceForLanguage(lang, 'vonage')
-          );
+          const baseVoiceName = business.aiSettings?.voice || LanguageDetector.getVoiceForLanguage(lang, 'vonage');
+          const voice = telnyxService.constructor.getTelnyxVoice(baseVoiceName);
           const transcribeLang = telnyxService.constructor.getTelnyxTranscriptionLanguage(lang);
 
           await telnyxService.answerCall(callControlId, business.telnyxApiKey);
@@ -810,9 +809,8 @@ class CallController {
         const lang = business.aiSettings?.supportedLanguages?.[0] || business.aiSettings?.language || 'en';
         const greeting = business.conversationSettings?.greeting ||
           LanguageDetector.getGreeting(lang, business.name);
-        const voice = telnyxService.constructor.getTelnyxVoice(
-          LanguageDetector.getVoiceForLanguage(lang, 'vonage')
-        );
+        const baseVoiceName = business.aiSettings?.voice || LanguageDetector.getVoiceForLanguage(lang, 'vonage');
+        const voice = telnyxService.constructor.getTelnyxVoice(baseVoiceName);
         const transcribeLang = telnyxService.constructor.getTelnyxTranscriptionLanguage(lang);
 
         await telnyxService.speak(callControlId, greeting, business.telnyxApiKey, {
@@ -927,9 +925,8 @@ class CallController {
         logger.info('Telnyx bot reply', { replyLength: speakText.length, callState: response.callState });
         const LanguageDetector = require('../utils/languageDetector');
         const lang = callSession.detectedLanguage || business.aiSettings?.supportedLanguages?.[0] || 'en';
-        const voice = telnyxService.constructor.getTelnyxVoice(
-          LanguageDetector.getVoiceForLanguage(lang, 'vonage')
-        );
+        const baseVoiceName = business.aiSettings?.voice || LanguageDetector.getVoiceForLanguage(lang, 'vonage');
+        const voice = telnyxService.constructor.getTelnyxVoice(baseVoiceName);
         const speakLang = telnyxService.constructor.getTelnyxTranscriptionLanguage(lang);
 
         await telnyxService.speak(callControlId, speakText, business.telnyxApiKey, {
