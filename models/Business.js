@@ -149,6 +149,68 @@ const businessSchema = new mongoose.Schema({
     humanTransferPhone: String
   },
 
+  // Role & Permissions (user merchant role - from be-domain-primetime)
+  roleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    default: null,
+  },
+
+  // Portal settings (from be-domain-primetime merchant)
+  domains: {
+    type: [String],
+    default: [],
+    trim: true,
+    lowercase: true,
+  },
+  supportMail: {
+    type: String,
+    default: null,
+    trim: true,
+  },
+  media: {
+    companyLogo: {
+      filename: { type: String, default: null },
+      originalName: { type: String, default: null },
+      path: { type: String, default: null },
+      mimetype: { type: String, default: null },
+      size: { type: Number, default: null },
+      uploadedAt: { type: Date, default: null },
+      url: { type: String, default: null },
+    },
+    frontPageImage: {
+      filename: { type: String, default: null },
+      originalName: { type: String, default: null },
+      path: { type: String, default: null },
+      mimetype: { type: String, default: null },
+      size: { type: Number, default: null },
+      uploadedAt: { type: Date, default: null },
+      url: { type: String, default: null },
+    },
+    favicon: {
+      filename: { type: String, default: null },
+      originalName: { type: String, default: null },
+      path: { type: String, default: null },
+      mimetype: { type: String, default: null },
+      size: { type: Number, default: null },
+      uploadedAt: { type: Date, default: null },
+      url: { type: String, default: null },
+    },
+    miniCompanyLogo: {
+      filename: { type: String, default: null },
+      originalName: { type: String, default: null },
+      path: { type: String, default: null },
+      mimetype: { type: String, default: null },
+      size: { type: Number, default: null },
+      uploadedAt: { type: Date, default: null },
+      url: { type: String, default: null },
+    },
+  },
+  themeConfiguration: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
+
   // Status
   isActive: {
     type: Boolean,

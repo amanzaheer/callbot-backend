@@ -19,7 +19,8 @@ const errorHandler = require('./middlewares/errorHandler');
 const businessRoutes = require('./routes/business');
 const callRoutes = require('./routes/calls');
 const adminRoutes = require('./routes/admin');
-const authRoutes = require('./routes/auth');
+const authUserRoutes = require('./routes/authUser');
+const userRoutes = require('./routes/user');
 
 const app = express();
 const server = http.createServer(app);
@@ -64,11 +65,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
+// API Routes - User auth (be-domain style: username, accessToken, refreshToken)
+app.use('/api/auth', authUserRoutes);
 app.use('/api/businesses', businessRoutes);
 app.use('/api/calls', callRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/user', userRoutes);        // User CRUD - be-domain style
 
 // Test Call Routes (for development/testing without real phone numbers)
 if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_TEST_CALLS === 'true') {
